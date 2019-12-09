@@ -1,0 +1,5 @@
+add_subdirectory(FOSL-Math)
+add_subdirectory(FOSL-Utilities)
+add_subdirectory(FOSL-ARM-Utilities)
+add_subdirectory(FOSL-TTY)
+add_subdirectory(FOSL-L3G4200D)
