@@ -2,15 +2,20 @@
 
 #include "Drivers.hpp"
 
-#define THROTTLE_MAXIMUM (1090)
-#define THROTTLE_MINIMUM (1040)
+#define THROTTLE_MAXIMUM (1100)
+#define THROTTLE_MINIMUM (1050)
 #define THROTTLE_DIFFERENCE (THROTTLE_MAXIMUM - THROTTLE_MINIMUM)
 #define THROTTLE_MEDIUM (THROTTLE_MINIMUM + THROTTLE_DIFFERENCE / 2)
 
-#define KP ((float) 20.0)
-#define KI ((float)  8.0)
-#define KD ((float) 50.0)
-#define INTEGRATOR_LIMIT (50.0)
+// #define KP ((float) 3.0)
+// #define KI ((float) 2.0)
+// #define KD ((float) 7.0)
+// #define INTEGRATOR_LIMIT (10.0)
+
+#define KP ((float)  5.0)
+#define KI ((float)  3.0)
+#define KD ((float) 10.0)
+#define INTEGRATOR_LIMIT (20.0)
 
 using namespace FOSL::TTY;
 using namespace Driver;
@@ -52,26 +57,18 @@ extern "C" int application(void)
 		// uint16_t start_time = htim1.Instance->CNT;
 
 		imu.read_angular_rate();
-		// if (imu.angular_rate.x >= +1) --imu.angular_rate.x;
 		// angle_offset += imu.angular_rate.x;// delta_time;
 
 		// float controll_signal = pid(angle_offset);
 		float controll_signal = pid(imu.angular_rate.x);
 
-		controll_signal = map_to(controll_signal, -200, 200, -1, 1);
+		controll_signal = map_to(controll_signal, -100, 100, -1, 1);
 
 		uint16_t  left_pulse_width = THROTTLE_MEDIUM + (THROTTLE_DIFFERENCE / 2) * (-controll_signal);
 		uint16_t right_pulse_width = THROTTLE_MEDIUM + (THROTTLE_DIFFERENCE / 2) * (+controll_signal);
 
-		static int c = 0;
-		if (c == 5000)
-		{
-			tty.printf("%+d\n", imu.angular_rate.x);
-			tty.printf("%+u\n",  left_pulse_width);
-			tty.printf("%+u\n", right_pulse_width);
-			tty.putchar('\n');
-			c = 0;
-		} c++;
+		 left_pulse_width += 10;
+		right_pulse_width -= 10;
 
 		 left_pulse_width = clamp( left_pulse_width, THROTTLE_MINIMUM, THROTTLE_MAXIMUM);
 		right_pulse_width = clamp(right_pulse_width, THROTTLE_MINIMUM, THROTTLE_MAXIMUM);

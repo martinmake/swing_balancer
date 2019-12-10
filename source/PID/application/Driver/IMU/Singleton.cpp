@@ -14,7 +14,7 @@ namespace Driver
 			if (!is_connected())
 				INITIALIZATION_FAILED("IMU", "CHIP NOT DETECTED");
 
-			L3G4200D::Base::initialize({ SCALE::DPS250 });
+			L3G4200D::Base::initialize({ SCALE::DPS2000 });
 
 			INITIALIZATION_OK("IMU");
 		}
